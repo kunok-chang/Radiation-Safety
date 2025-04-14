@@ -41,7 +41,7 @@ def monte_carlo_flux(num_photons, r):
 
 # Calculate flux and scale by emission rate
 flux = monte_carlo_flux(num_photons, r)
-actual_flux = flux * emission_rate  # Flux per hour
+actual_flux = flux * emission_rate / num_photons  # Flux per hour
 
 # Output results
 print(f"Distance: {r} m")
