@@ -2,7 +2,7 @@ import numpy as np
 
 # Simulation parameters
 num_photons = 100000  # Total number of photons emitted
-emission_rate = 1e6  # Photons emitted per hour per unit length
+emission_rate = 1e6  # Photons emitted per hour per unit lengt
 x = 10.0  # Perpendicular distance from the infinite line source (in meters)
 
 # Function to generate isotropic directions for photons
