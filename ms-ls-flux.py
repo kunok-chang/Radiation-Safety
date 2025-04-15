@@ -1,8 +1,8 @@
 import numpy as np
 
 # Simulation parameters
-num_photons = 100000  # Total number of photons emitted
-emission_rate = 1e6  # Photons emitted per hour per unit length
+num_photons = 1e5  # Total number of photons emitted
+SL = 1e6  # Photons emitted per hour per unit length
 x = 10.0  # Perpendicular distance from the infinite line source (in meters)
 
 # Function to generate isotropic directions for photons
@@ -41,7 +41,7 @@ def monte_carlo_flux_line_source(num_photons, x):
 
 # Calculate flux and scale by emission rate
 flux = monte_carlo_flux_line_source(num_photons, x)
-actual_flux = flux * emission_rate # Flux per hour
+actual_flux = flux * SL # Flux per hour
 
 # Output results
 print(f"Distance: {x} m")
