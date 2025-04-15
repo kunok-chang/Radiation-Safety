@@ -36,7 +36,7 @@ def monte_carlo_photon_flux(Sp_hour, distance, num_samples=1000000):
     return flux
 
 # Example parameters
-Sp_hour = 3.6e23  # Photon emission rate in photons/hour
+Sp_hour = 1.0e6  # Photon emission rate in photons/hour
 distance = 10     # Distance from the point source in meters
 num_samples = 1000000  # Number of photons to simulate
 
