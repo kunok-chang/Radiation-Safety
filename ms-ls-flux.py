@@ -1,49 +1,41 @@
 import numpy as np
 
-# Simulation parameters
-num_photons = 1e5  # Total number of photons emitted
-SL = 1e6  # Photons emitted per hour per unit length
-x = 10.0  # Perpendicular distance from the infinite line source (in meters)
+def f(z, x):
+	return 1 / (x**2 + z**2)
 
-# Function to generate isotropic directions for photons
-def generate_isotropic_directions(num_photons):
-    """Generate isotropic directions for photons."""
-    phi = np.random.uniform(0, 2 * np.pi, num_photons)  # Azimuthal angle
-    costheta = np.random.uniform(-1, 1, num_photons)  # Cosine of polar angle
-    theta = np.arccos(costheta)  # Polar angle
-    return theta, phi
+def monte_carlo_flux_infinite_line(S_L, distance, length=1000, num_samples=1000000):
+    """
+    Calculate photon flux from an infinite line source using Monte Carlo simulation.
 
-# Monte Carlo simulation for flux at distance x from an infinite line source
-def monte_carlo_flux_line_source(num_photons, x):
-    """Simulate photon flux at distance x using Monte Carlo."""
-    # Generate isotropic directions
-    theta, phi = generate_isotropic_directions(num_photons)
+    Parameters:
+    - S_L (float): Photon emission rate per unit length (#/hour/m).
+    - distance (float): Distance from the line source (m).
+    - length (float): Length of the line for simulation approximation (m).
+    - num_samples (int): Number of Monte Carlo samples.
 
-    # Direction vectors (photon trajectories)
-    dx = np.sin(theta) * np.cos(phi)
-    dy = np.sin(theta) * np.sin(phi)
-    dz = np.cos(theta)
-
-    # Generate random starting positions along the infinite line source
-    line_y = np.random.uniform(-1e3, 1e3, num_photons)  # Line extends from -infinity to infinity (simulated)
-
-    # Compute closest approach distances to the line source
-    distances = np.sqrt(x**2 + line_y**2)
-
-    # Count photons that reach the distance x within a small tolerance
-    hits_on_circle = np.isclose(distances, x, atol=1e-3)
-    num_hits = np.sum(hits_on_circle)
-
-    # Calculate flux per unit length of the line source
-    circle_circumference = 2 * np.pi * x  # Circumference of the circle at distance x
-    flux = num_hits / (circle_circumference * 2 * 1e3)  # Normalize by line length (-1e3 to 1e3)
+    Returns:
+    - Photon flux at the given distance (#/hour/m²).
+    """
+    # Approximate the infinite line with a finite segment of `length`
+    line_half_length = length / 2
+    
+    # Randomly sample photon emission points along the line source
+    z_positions = np.random.uniform(-line_half_length, line_half_length, num_samples)
+    
+    # Integrate using Monte Carlo Method
+    function_values = f(z_positions, x)
+    
+    # Calculate photon flux
+    flux = S_L * (length / num_samples) * np.sum(function_values) / (4*np.pi)
     return flux
 
-# Calculate flux and scale by emission rate
-flux = monte_carlo_flux_line_source(num_photons, x)
-actual_flux = flux * SL # Flux per hour
+# Parameters
+S_L = 1e6  # Photon emission rate per unit length (#/hour/m)
+distance = 10  # Distance from the line source (m)
+length = 10000  # Length of line segment to simulate infinite behavior
+num_samples = 1000000  # Number of Monte Carlo samples
 
-# Output results
-print(f"Distance: {x} m")
-print(f"Simulated Flux: {flux:.4e} photons/m^2")
-print(f"Flux per hour: {actual_flux:.4e} photons/m^2/h")
+# Calculate photon flux using Monte Carlo
+flux = monte_carlo_flux_infinite_line(S_L, distance, length, num_samples)
+
+print(f"Estimated photon flux at {distance} meters: {flux:.4e} #/hour/m²")
